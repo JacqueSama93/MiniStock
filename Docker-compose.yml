@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Base de Datos
+  db:
+    image: mysql:8.0
+    container_name: ministock-db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_coppel
+      - MYSQL_DATABASE=ministock_db
+      - MYSQL_USER=user_ministock
+      - MYSQL_PASSWORD=password_ministock
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - ministock-network
+
+  # Backend
+  backend:
+    build: ./Backend  # Docker buscará el Dockerfile aquí
+    container_name: ministock-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db  # Ojo: Aquí usamos 'db' porque es el nombre del servicio arriba
+      - DB_USER=user_ministock
+      - DB_PASSWORD=password_ministock
+      - DB_NAME=ministock_db
+      - PORT=3000
+    depends_on:
+      - db
+    networks:
+      - ministock-network
+
+networks:
+  ministock-network:
+    driver: bridge
+
+volumes:
+  db_data:
