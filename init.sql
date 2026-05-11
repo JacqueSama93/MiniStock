@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS productos (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    sku VARCHAR(50) UNIQUE NOT NULL,
-    cantidad INT DEFAULT 0,
-    precio DECIMAL(10, 2),
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	nombre VARCHAR(100) NOT NULL,
+	categoria VARCHAR(50),
+	stock INT DEFAULT 0,
+	precio DECIMAL(10, 2),
+	creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO productos (nombre, sku, cantidad, precio) 
-VALUES ('Producto Inicial', 'SKU-001', 10, 150.00);
+INSERT INTO productos (nombre, categoria, stock, precio) 
+VALUES ('Producto Inicial', 'Electrónica', 10, 150.00);

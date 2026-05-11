@@ -18,7 +18,20 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - ministock-network
-
+  #frontend
+  frontend:
+    build: 
+      context: ./Frontend
+      args:
+        - VITE_API_URL=http://10.224.182.212:3000/api/productos
+    container_name: ministock-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - ministock-network
+    
   # Backend
   backend:
     build: ./Backend  # Docker buscará el Dockerfile aquí

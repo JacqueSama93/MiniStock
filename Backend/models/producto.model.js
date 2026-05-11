@@ -13,15 +13,15 @@ const Producto = {
     },
 
     create: async (datos) => {
-        const { nombre, sku, cantidad, precio } = datos;
-        const query = 'INSERT INTO productos (nombre, sku, cantidad, precio) VALUES (?, ?, ?, ?)';
-        return await pool.query(query, [nombre, sku, cantidad, precio]);
+        const { nombre, categoria, stock, precio } = datos;
+        const query = 'INSERT INTO productos (nombre, categoria, stock, precio) VALUES (?, ?, ?, ?)';
+        return await pool.query(query, [nombre, categoria, stock, precio]);
     },
 
     update: async (id, datos) => {
-        const { nombre, sku, cantidad, precio } = datos;
-        const query = 'UPDATE productos SET nombre=?, sku=?, cantidad=?, precio=? WHERE id=?';
-        return await pool.query(query, [nombre, sku, cantidad, precio, id]);
+        const { nombre, categoria, stock, precio } = datos;
+        const query = 'UPDATE productos SET nombre=?, categoria=?, stock=?, precio=? WHERE id=?';
+        return await pool.query(query, [nombre, categoria, stock, precio, id]);
     },
 
     delete: async (id) => {
@@ -33,8 +33,8 @@ class ProductoDTO {
     constructor(obj) {
         this.id = obj.id;
         this.nombre = obj.nombre;
-        this.sku = obj.sku;
-        this.stock = obj.cantidad; 
+        this.categoria = obj.categoria;
+        this.stock = obj.stock; 
         this.precio = obj.precio;
         this.formatoPrecio = `$${obj.precio.toFixed(2)}`;
     }
