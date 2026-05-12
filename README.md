@@ -95,12 +95,54 @@ Base: `http://localhost/api/productos`
 }
 ```
 
-## Levantar el proyecto con Docker Compose paso a paso
+## Levantar el proyecto con deploy.sh
 
-1. En la raíz del proyecto, crea un `.env` con las variables de entorno necesarias.
-2. Ejecuta `docker-compose up --build`.
-3. Ingresa a `http://localhost` para ver la aplicación React.
-4. El proxy Nginx enruta internamente las llamadas a `http://localhost/api/...` hacia el backend.
+1. Clona el repositorio:
+
+```bash
+git clone <url-del-repositorio>
+```
+
+2. Entra al directorio del proyecto:
+
+```bash
+cd MiniStock
+```
+
+3. Da permiso de ejecución al script:
+
+```bash
+chmod +x deploy.sh
+```
+
+4. Ejecuta el despliegue:
+
+```bash
+./deploy.sh
+```
+
+5. Abre tu navegador en:
+
+```bash
+http://tu-ip-o-localhost
+```
+
+¡El sistema estará listo!
+
+### Alternativa manual
+
+Si prefieres no usar `deploy.sh`, primero crea un archivo `.env` basado en `.env.example` y luego inicia el proyecto con:
+
+```bash
+docker-compose up --build
+```
+
+### ¿Qué hace `deploy.sh`?
+
+- detecta automáticamente la IP pública y la guarda en `.env`
+- crea `.env` si no existe, con valores por defecto para MySQL y backend
+- exporta las variables de entorno necesarias para Docker Compose
+- levanta los servicios con `docker-compose up -d --build`
 
 ## Notas adicionales
 
