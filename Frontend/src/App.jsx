@@ -1,30 +1,67 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { productoService } from './services/productoService';
+import { ProductoForm } from './components/ProductoForm';
+import { ProductoTabla } from './components/ProductoTabla';
 
 function App() {
   const [productos, setProductos] = useState([]);
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/productos";
+  const [form, setForm] = useState({ nombre: '', categoria: '', stock: 0, precio: 0 });
+  const [editId, setEditId] = useState(null);
 
-  useEffect(() => {
-    axios.get(API_URL).then(res => setProductos(res.data)).catch(console.error);
-  }, []);
+  useEffect(() => { cargarProductos(); }, []);
+
+  const cargarProductos = async () => {
+    const data = await productoService.getAll();
+    setProductos(data);
+  };
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (editId) {
+      await productoService.update(editId, form);
+      setEditId(null);
+    } else {
+      await productoService.create(form);
+    }
+    setForm({ nombre: '', categoria: '', stock: 0, precio: 0 });
+    cargarProductos();
+  };
+
+  const prepararEdicion = async (id) => {
+    const p = await productoService.getById(id);
+    setEditId(p.id);
+    setForm({ nombre: p.nombre, categoria: p.categoria, stock: p.stock, precio: p.precio });
+  };
+
+  const eliminar = async (id) => {
+    if (window.confirm("¿Eliminar?")) {
+      await productoService.delete(id);
+      cargarProductos();
+    }
+  };
 
   return (
-    <div>
-      <h1>Inventario MiniStock</h1>
-      <table>
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Categoría</th><th>Stock</th></tr>
-        </thead>
-        <tbody>
-          {productos.map(p => (
-            <tr key={p.id}>
-              <td>{p.id}</td><td>{p.nombre}</td><td>{p.categoria}</td><td>{p.stock}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: 'auto' }}>
+      <h1>📦 MiniStock System</h1>
+      
+      {/* Formulario de productos */}
+      <ProductoForm 
+        form={form} 
+        onChange={handleChange} 
+        onSubmit={handleSubmit} 
+        isEditing={!!editId}
+        onCancel={() => { setEditId(null); setForm({nombre:'', categoria:'', stock:0, precio:0}); }}
+      />
+
+      <ProductoTabla 
+        productos={productos} 
+        onEdit={prepararEdicion} 
+        onDelete={eliminar} 
+      />
     </div>
   );
 }
+
 export default App;
