@@ -7,10 +7,10 @@ services:
     container_name: ministock-db
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=root_password_coppel
-      - MYSQL_DATABASE=ministock_db
-      - MYSQL_USER=user_ministock
-      - MYSQL_PASSWORD=password_ministock
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_password}
+      - MYSQL_DATABASE=${DB_NAME:-ministock_db}
+      - MYSQL_USER=${DB_USER:-user_ministock}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-password_ministock}
     ports:
       - "3306:3306"
     volumes:
@@ -23,12 +23,8 @@ services:
     build: 
       context: ./Frontend
       args:
-        - VITE_API_URL=http://10.224.182.212:3000/api/productos
+        - VITE_API_URL=http://${SERVER_IP:-localhost}:${BACKEND_PORT:-3000}/api/productos
     container_name: ministock-frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
     networks:
       - ministock-network
     
@@ -37,16 +33,27 @@ services:
     build: ./Backend  # Docker buscará el Dockerfile aquí
     container_name: ministock-backend
     restart: always
-    ports:
-      - "3000:3000"
     environment:
-      - DB_HOST=db  # Ojo: Aquí usamos 'db' porque es el nombre del servicio arriba
-      - DB_USER=user_ministock
-      - DB_PASSWORD=password_ministock
-      - DB_NAME=ministock_db
-      - PORT=3000
+      - DB_HOST=${DB_HOST:-db}
+      - DB_USER=${DB_USER:-user_ministock}
+      - DB_PASSWORD=${DB_PASSWORD:-password_ministock}
+      - DB_NAME=${DB_NAME:-ministock_db}
+      - PORT=${BACKEND_PORT:-3000}
     depends_on:
       - db
+    networks:
+      - ministock-network
+      
+  proxy:
+    build: ./nginx
+    container_name: ministock-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+    environment:
+      - SERVER_IP=${SERVER_IP}
     networks:
       - ministock-network
 
