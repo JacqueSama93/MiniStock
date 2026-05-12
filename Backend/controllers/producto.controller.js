@@ -1,4 +1,4 @@
-const Producto = require('../models/producto.model');
+const { Producto } = require('../models/producto.model');
 
 const productoController = {
     obtenerTodos: async (req, res) => {
@@ -6,7 +6,7 @@ const productoController = {
             const productos = await Producto.getAll();
             res.json(productos);
         } catch (error) {
-            res.status(500).json({ mensaje: "Error al obtener productos" });
+            res.status(500).json({ mensaje: error.message });
         }
     },
 
@@ -18,7 +18,7 @@ const productoController = {
             }
             res.json(producto);
         } catch (error) {
-            res.status(500).json({ mensaje: "Error al buscar el producto" });
+            res.status(500).json({ mensaje: error.message });
         }
     },
 

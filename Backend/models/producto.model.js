@@ -36,7 +36,8 @@ class ProductoDTO {
         this.categoria = obj.categoria;
         this.stock = obj.stock; 
         this.precio = obj.precio;
-        this.formatoPrecio = `$${obj.precio.toFixed(2)}`;
+	const valorNumerico = Number(obj.precio);
+        this.formatoPrecio = `$${valorNumerico.toFixed(2)}`;
     }
 }
 
