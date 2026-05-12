@@ -22,6 +22,20 @@ fi
 # 3. Exportar variables para que Docker Compose las vea
 export $(grep -v '^#' .env | xargs)
 
-# 4. Levantar el sistema
-echo "🚀 Desplegando MiniStock en http://$PUBLIC_IP"
+# 4. Levantar la base de datos primero
+echo "⏳ Iniciando Base de Datos..."
+docker-compose up -d db
+
+# 5. Esperar a que MySQL acepte conexiones (Health Check)
+echo "🔍 Esperando a que la Base de Datos esté lista..."
+until docker exec ministock-db mysqladmin ping -h localhost -u user_ministock -ppassword_ministock --silent; do
+    echo -n "."
+    sleep 2
+done
+
+echo -e "\n✅ Base de Datos lista. Levantando servicios restantes..."
+
+# 6. Levantar el resto de los servicios
 docker-compose up -d --build
+
+echo "🚀 Sistema desplegado exitosamente en http://$PUBLIC_IP"
